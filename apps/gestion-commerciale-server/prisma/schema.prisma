@@ -1,0 +1,99 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Client {
+  adresse          String?
+  commandes        Commande[]
+  createdAt        DateTime   @default(now())
+  dateDinscription DateTime
+  email            String     @unique
+  entreprise       String?
+  id               String     @id @default(cuid())
+  nom              String     @unique
+  prenom           String
+  telephone        String     @unique
+  updatedAt        DateTime   @updatedAt
+}
+
+model Produit {
+  categorie      String
+  createdAt      DateTime        @default(now())
+  dateDajout     DateTime
+  description    String?
+  id             String          @id @default(cuid())
+  ligneCommandes LigneCommande[]
+  nom            String          @unique
+  prixAchat      String
+  prixVente      String?
+  quantitStock   String
+  reference      String?         @unique
+  statut         String?         @unique
+  updatedAt      DateTime        @updatedAt
+}
+
+model Commande {
+  ateCommande    String
+  client_id      Client?         @relation(fields: [client_idId], references: [id])
+  client_idId    String?
+  createdAt      DateTime        @default(now())
+  etat           String
+  factures       Facture[]
+  id             String          @id @default(cuid())
+  ligneCommandes LigneCommande[]
+  montantTotal   String
+  numeroCommande String          @unique
+  updatedAt      DateTime        @updatedAt
+}
+
+model LigneCommande {
+  commande_id   Commande @relation(fields: [commande_idId], references: [id])
+  commande_idId String
+  createdAt     DateTime @default(now())
+  id            String   @id @default(cuid())
+  prixUnitaire  String
+  produit_id    Produit  @relation(fields: [produit_idId], references: [id])
+  produit_idId  String
+  quantit       String
+  remise        String?
+  totalLignes   String
+  updatedAt     DateTime @updatedAt
+}
+
+model Utilisateur {
+  createdAt      DateTime @default(now())
+  dateDeCreation DateTime
+  email          String   @unique
+  id             String   @id @default(cuid())
+  motdepasse     String
+  nomUtilisateur String   @unique
+  role           String
+  updatedAt      DateTime @updatedAt
+}
+
+model Facture {
+  commande_id   Commande[]
+  createdAt     DateTime   @default(now())
+  dateFacture   DateTime
+  id            String     @id @default(cuid())
+  montantTotal  String
+  numeroFacture String?    @unique
+  statutPaiment String
+  updatedAt     DateTime   @updatedAt
+}
+
+model Fournisseur {
+  adresse        String?
+  createdAt      DateTime @default(now())
+  email          String?
+  id             String   @id @default(cuid())
+  nomFournisseur String   @unique
+  produitsLivres String?
+  telephone      String?
+  updatedAt      DateTime @updatedAt
+}
